@@ -90,6 +90,7 @@ jobs:
           command: |
             pwd
             cd frontend
+            npm install jest-junit
             npm run test
 
 
