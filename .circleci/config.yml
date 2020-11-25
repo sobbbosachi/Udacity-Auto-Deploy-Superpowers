@@ -43,8 +43,7 @@ jobs:
       - run:
           name: Build front-end
           command: | #Add code to build/compile the front-end
-            ll
-            ls
+            ls -la
             cd frontend
             npm i
             npm run build
