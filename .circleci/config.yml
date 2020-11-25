@@ -141,7 +141,10 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             pwd
+            ls -ls
             cd ~
+            ls -la
+            cd /home/circleci/project/
             pwd
             cd '.circleci'
             cd files
