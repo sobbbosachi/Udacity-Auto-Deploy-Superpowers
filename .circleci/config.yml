@@ -43,7 +43,6 @@ jobs:
       - run:
           name: Build front-end
           command: | #Add code to build/compile the front-end
-            ls -la
             cd frontend
             npm i
             npm run build
@@ -64,9 +63,6 @@ jobs:
             cd backend
             npm i
             npm run build
-            cd .. 
-            cd '.circleci'
-            pwd
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -131,7 +127,7 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            cd .circleci
+            cd '.circleci'
             cd files
             pwd
             aws cloudformation deploy \
@@ -182,20 +178,20 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
 
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [main]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
