@@ -89,7 +89,7 @@ jobs:
           name: Test Back-end
           command: |
             pwd
-            cd frontend
+            cd backend
             npm install jest-junit
             npm run test
 
@@ -114,7 +114,7 @@ jobs:
           name: Scan Back-End
           command: |
             pwd
-            cd frontend
+            cd backend
             npm audit --audit-level=critical
 
 workflows:
