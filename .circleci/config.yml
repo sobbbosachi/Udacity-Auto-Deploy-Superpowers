@@ -69,7 +69,7 @@ jobs:
             ls -la
             cd files
             ls -la
-            
+
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -156,7 +156,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            cd project/.circleci/ansible/
+            cd project/'.circleci'/ansible/
             touch inventory.txt
             cat inventory
             aws ec2 describe-instances \
@@ -168,6 +168,7 @@ jobs:
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt
+            cat inventory
             exit 1
       - persist_to_workspace:
           root: ~/
@@ -176,10 +177,16 @@ jobs:
       - run:
           name: Destroy environment
           command: |
-            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
       # Here's where you will add some code to rollback on failure
-
+      - run:
+          name: store the backend ip address to memstash so that frontend can use it. 
+          command: |
+            chmod 777 bkmemstash.sh
+            pwd
+            ./bkmemstash.sh
+            cat inventory
 workflows:
   default:
     jobs:
