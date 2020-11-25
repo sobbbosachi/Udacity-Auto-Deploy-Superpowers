@@ -63,6 +63,13 @@ jobs:
             cd backend
             npm i
             npm run build
+
+            cd .. 
+            cd '.circleci'
+            ls -la
+            cd files
+            ls -la
+            
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
