@@ -73,7 +73,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: test frontend
+          name: Test Frontend
           command: |
             pwd
             cd frontend
@@ -86,7 +86,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: test frontend
+          name: Test Back-end
           command: |
             pwd
             cd frontend
