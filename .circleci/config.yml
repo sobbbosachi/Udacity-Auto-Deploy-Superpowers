@@ -43,6 +43,8 @@ jobs:
       - run:
           name: Build front-end
           command: | #Add code to build/compile the front-end
+            ll
+            ls
             cd frontend
             npm i
             npm run build
@@ -138,11 +140,14 @@ jobs:
       - run:
           name: Ensure front-end infrastructure exist
           command: |
+            cd .circleci
+            cd files
+            pwd
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              #--tags project=udapeople \
-              # --stack-name "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
-              # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+              --template-file frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -163,6 +168,11 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - run:
+          name: Destroy environment
+          command: |
+            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
       # Here's where you will add some code to rollback on failure
 
 workflows:
@@ -170,20 +180,20 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
 
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [main]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     filters:
+      #       branches:
+      #         only: [main]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
