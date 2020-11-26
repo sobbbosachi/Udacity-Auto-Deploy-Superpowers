@@ -173,13 +173,16 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
-      # Add ssh keys with fingerprint
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"]
+      - run: apk add --no-cache --upgrade bash
+      - run: apk --no-cache add curl
       # attach workspace
       - run:
           name: Install dependencies
           command: |
-            # Your code here
+            apk add --update ansible
             exit 1
       - run:
           name: Configure server
