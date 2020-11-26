@@ -170,7 +170,7 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> inventory.txt
+              --output text >> inventory.txt)
             cat inventory
             exit 1
       - persist_to_workspace:
