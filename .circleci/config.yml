@@ -151,7 +151,8 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            apt-get update && apt-get install -y openssh-client git
+            sudo apt-get update
+            sudo  apt-get install -y openssh-client git
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople" \
