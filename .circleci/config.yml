@@ -26,7 +26,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = 1
@@ -129,6 +129,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum install -y tar 
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -174,13 +175,13 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"]
-      - run: apk add --no-cache --upgrade bash
-      - run: apk --no-cache add curl
       - attach_workspace:
           at: .circleci/ansible/
       - run:
           name: Install dependencies
           command: |
+            apk add --no-cache --upgrade bash
+            apk --no-cache add curl
             apk add --update ansible
             exit 1
       - run:
@@ -188,7 +189,7 @@ jobs:
           command: |
             # Your code here
             exit 1
-      # Here's where you will add some code to rollback on failure
+      - revert-migrations
 
 
 workflows:
