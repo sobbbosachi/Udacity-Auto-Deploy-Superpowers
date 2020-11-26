@@ -160,8 +160,6 @@ jobs:
               --output text >> inventory.txt)
             cat inventory.txt
             ls -la
-      - attach_workspace:
-          at: .circleci/ansible/
       - persist_to_workspace:
           root: .circleci/ansible/ 
           paths:
@@ -178,7 +176,8 @@ jobs:
           fingerprints: ["4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"]
       - run: apk add --no-cache --upgrade bash
       - run: apk --no-cache add curl
-      # attach workspace
+      - attach_workspace:
+          at: .circleci/ansible/
       - run:
           name: Install dependencies
           command: |
