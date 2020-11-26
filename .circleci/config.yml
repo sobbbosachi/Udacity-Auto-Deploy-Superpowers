@@ -160,8 +160,8 @@ jobs:
             pwd
             cd .circleci/ansible/
             touch inventory.txt
-            echo 'Sobbosachi Mojumder'
-            cat inventory
+            echo 'Sobbosachi Mojumder' >> inventory.txt
+            cat inventory.txt
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople" \
