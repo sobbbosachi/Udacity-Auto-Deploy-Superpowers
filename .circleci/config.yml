@@ -69,13 +69,6 @@ jobs:
             cd backend
             npm i
             npm run build
-
-            cd .. 
-            cd '.circleci'
-            ls -la
-            cd files
-            ls -la
-
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -154,14 +147,10 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            pwd
-            cd .circleci/ansible/
-            touch inventory.txt
-            echo 'Sobbosachi Mojumder' >> inventory.txt
-            cat inventory.txt
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople" \
@@ -171,7 +160,6 @@ jobs:
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
-            cat inventory
             exit 1
       - persist_to_workspace:
           root: ~/
