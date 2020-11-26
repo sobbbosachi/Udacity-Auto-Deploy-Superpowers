@@ -162,7 +162,6 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat ./.circleci/ansible/inventory.txt
-            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
@@ -170,12 +169,15 @@ jobs:
       - destroy-environment
       # Here's where you will add some code to rollback on failure
       - run:
-          name: store the backend ip address to memstash so that frontend can use it. 
+          name: Store the backend ip address to memstash so that frontend can use it. 
           command: |
             chmod 777 bkmemstash.sh
             pwd
             ./bkmemstash.sh
-            cat inventory
+            cat inventory.txt
+            exit 1
+
+
 workflows:
   default:
     jobs:
