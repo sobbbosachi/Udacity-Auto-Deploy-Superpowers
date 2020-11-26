@@ -137,14 +137,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            pwd
-            ls -ls
-            cd ~
-            ls -la
-            cd /home/circleci/project/
             pwd
             cd '.circleci'
             cd files
@@ -209,13 +205,13 @@ workflows:
       #     requires: [build-frontend]
       # - test-backend:
       #     requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
 
       - deploy-infrastructure:
-          requires: [scan-frontend, scan-backend]
+          #requires: [scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
