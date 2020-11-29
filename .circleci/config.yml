@@ -162,7 +162,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
-            exit 1
+            #exit 1
       - run:
           name: store the backend ip address to memstash so that frontend can use it. 
           command: |
