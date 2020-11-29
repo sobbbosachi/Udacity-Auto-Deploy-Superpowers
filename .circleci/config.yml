@@ -162,11 +162,19 @@ jobs:
               --output text >> inventory.txt)
             cat inventory.txt
             #exit 1
-
+      - run:
+          name: store the backend ip address to memstash so that frontend can use it. 
+          command: |
+            #!/bin/bash
+            ipaddress=$( tail -n 1 inventory.txt)
+            ipaddress1=$( tail -n 1 ./.circleci/ansible/inventory.txt)
+            echo $ipaddress
+            echo $ipaddress1
+            curl -H "Content-Type: text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data $ipaddress https://api.memstash.io/values/backend
       - persist_to_workspace:
-          root: ~/
+          root: .circleci/ansible/
           paths:
-            - .circleci/ansible/inventory.txt
+            - inventory.txt
       - destroy-environment
       # Here's where you will add some code to rollback on failure
 
