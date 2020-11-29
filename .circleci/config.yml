@@ -4,28 +4,23 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here
-      to:
+      workflow-id:
         type: string
-        default: "udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}"
-      front:
-        type: string
-        default: "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}"
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            pip3 install --user awscli
-            aws cloudformation delete-stack --stack-name  << parameters.to >>
-            aws cloudformation delete-stack --stack-name  << parameters.front >>
+            aws cloudformation delete-stack --stack-name  udapeople-backend-prod-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name  udapeople-frontend-prod-<< parameters.workflow-id >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      to:
+      workflow-id:
         type: string
-        default: "udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}"
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Revert migrations
@@ -167,7 +162,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
-            #exit 1
+            exit 1
       - run:
           name: store the backend ip address to memstash so that frontend can use it. 
           command: |
@@ -198,7 +193,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            pip3 install --user awscli
+            #pip3 install --user awscli
       - run:
           name: Configure server
           command: |
