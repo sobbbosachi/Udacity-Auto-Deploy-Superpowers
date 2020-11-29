@@ -16,9 +16,8 @@
       # Your code here
 
     - name: "install python for Ansible."
-      pip install --user ansible
       # Your code here
 
   roles:
-    - deploy
+    - configure-server
     # Your code here
