@@ -231,16 +231,14 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            # Your code here
+            cd backend
+            npm install
+            npm run build
+            npm run migrations
             exit 1
       - run:
           name: Send migration results to memstash
           command: |
-            cd backend
-            npm install
-            npm run build
-            npm run migrations | tee mig-out
-            # Send migration results to memstash
             if grep "has been executed successfully" mig-out
             then 
               curl -H "Content-Type: text/plain" -H "token: jimgrate-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
@@ -248,12 +246,8 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: jimgrate-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
               exit 1
             fi
-            exit 1
-      - revert-migrations:
-          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-
+      - revert-migrations
+      - destroy-environment
       # Here's where you will add some code to rollback on failure
 
 workflows:
