@@ -186,15 +186,15 @@ jobs:
             cat inventory.txt
             #exit 1
       - run:
-          name: store the backend ip address to memstash so that frontend can use it. 
+          name: Store the backend ip address to memstash so that frontend can use it. 
           command: |
             #!/bin/bash
             ipaddress=$( tail -n 1 inventory.txt)
             ipaddress1=$( tail -n 1 ./.circleci/ansible/inventory.txt)
             echo $ipaddress
             echo $ipaddress1
-            curl -H "Content-Type: text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data $ipaddress https://api.memstash.io/values/backend
-            curl -H "Content-Type:text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data "arn:aws:s3:::udapeople-${CIRCLE_WORKFLOW_ID:0:7}" https://api.memstash.io/values/frontend
+            curl -H "Content-Type: text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data $ipaddress https://api.memstash.io/values/backend
+            curl -H "Content-Type:text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data "arn:aws:s3:::udapeople-${CIRCLE_WORKFLOW_ID:0:7}" https://api.memstash.io/values/frontend
       - persist_to_workspace:
           root: ~/
           paths:
@@ -211,17 +211,24 @@ jobs:
             - "4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"
       - attach_workspace:
           at: ~/
-      - write-envvars-file
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            apk add openssh-client
-            apk --no-cache add curl
+            apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli
+      - run:
+          name: Set up inventory file
+          command: |
+            cd .circleci/ansible
+            echo "[web]" >> inventory.txt
+            URLS=$(curl -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
+            echo "$URLS" >> inventory.txt
+            cat inventory.txt
+
+      - write-envvars-file
       - run:
           name: Configure server
           command: |
-            chmod 400
             cd .circleci/ansible/      
             pwd
             ls -la
