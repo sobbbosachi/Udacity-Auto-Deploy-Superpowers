@@ -171,10 +171,10 @@ jobs:
             echo $ipaddress
             echo $ipaddress1
             curl -H "Content-Type: text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data $ipaddress https://api.memstash.io/values/backend
-      - persist_to_workspace:
-          root: .circleci/ansible/
-          paths:
-            - inventory.txt
+      # - persist_to_workspace:
+      #     root: .circleci/ansible/
+      #     paths:
+      #       - inventory.txt
       - destroy-environment
       # Here's where you will add some code to rollback on failure
 
