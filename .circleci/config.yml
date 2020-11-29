@@ -23,6 +23,9 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       # Add parameter here
+      to:
+        type: string
+        default: "udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}"
     steps:
       - run:
           name: Revert migrations
@@ -216,18 +219,17 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
             #exit 1
       - revert-migrations:
-          workflow-id-7: ${CIRCLE_WORKFLOW_ID:0:7}
+          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+          front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment:
-          workflow-id-7: ${CIRCLE_WORKFLOW_ID:0:7}
+          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+          front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
     docker:
     - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: |
-            backend-build
       - run:
           name: Run migrations
           command: |
