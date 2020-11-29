@@ -22,7 +22,6 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here
       to:
         type: string
         default: "udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}"
@@ -35,10 +34,11 @@ commands:
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+            cd ~/project/backend
+            npm install
+            npm run migrations:revert
+            npm run migrations:revert
+            exit 1
             fi
 
 jobs:
