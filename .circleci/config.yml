@@ -145,12 +145,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: store the backend ip address to memstash so that frontend can use it. 
-          command: |
-            chmod 777 bkmemstash.sh
-            ./bkmemstash.sh
-            cat inventory
+
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -166,6 +161,14 @@ jobs:
               --output text >> inventory.txt)
             cat inventory.txt
             #exit 1
+
+      - run:
+          name: store the backend ip address to memstash so that frontend can use it. 
+          command: |
+            chmod 777 bkmemstash.sh
+            ./bkmemstash.sh
+            cat inventory
+
       - attach_workspace:
           at: ~/
       - persist_to_workspace:
