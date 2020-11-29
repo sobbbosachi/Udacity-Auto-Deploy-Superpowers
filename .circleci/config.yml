@@ -164,7 +164,7 @@ jobs:
           root: .circleci/ansible/ 
           paths:
             - inventory.txt
-      - destroy-environment
+      #- destroy-environment
       # Here's where you will add some code to rollback on failure
 
   configure-infrastructure:
@@ -189,6 +189,7 @@ jobs:
           command: |
             # Your code here
             exit 1
+      - destroy-environment
       - revert-migrations
 
 workflows:
