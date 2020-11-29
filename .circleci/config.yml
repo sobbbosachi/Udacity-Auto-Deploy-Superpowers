@@ -241,9 +241,9 @@ jobs:
           command: |
             if grep "has been executed successfully" mig-out
             then 
-              curl -H "Content-Type: text/plain" -H "token: jimgrate-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
+              curl -H "Content-Type: text/plain" -H "token: shvon-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
             else
-              curl -H "Content-Type: text/plain" -H "token: jimgrate-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
+              curl -H "Content-Type: text/plain" -H "token: shovon-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
               exit 1
             fi
       - revert-migrations
