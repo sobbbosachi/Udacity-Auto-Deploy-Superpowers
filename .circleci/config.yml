@@ -155,7 +155,7 @@ jobs:
               --filters "Name=tag:project,Values=udapeople" \
               --output text >> ./.circleci/ansible/inventory.txt
             cat ./.circleci/ansible/inventory.txt
-            
+
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -163,8 +163,6 @@ jobs:
             cat inventory.txt
             #exit 1
 
-      - attach_workspace:
-          at: ~/
       - persist_to_workspace:
           root: ~/
           paths:
