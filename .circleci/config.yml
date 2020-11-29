@@ -167,7 +167,7 @@ jobs:
           command: |
             chmod 777 bkmemstash.sh
             ./bkmemstash.sh
-            cat inventory
+            cat inventory.txt
 
       - attach_workspace:
           at: ~/
