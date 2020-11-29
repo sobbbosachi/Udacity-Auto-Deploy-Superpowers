@@ -25,9 +25,9 @@
       wait_for_connection:
         #timeout: 100
 
-    - name: "install python for Ansible."
-      become: true
-      raw: "sudo yum -y install python"
+    # - name: "install python for Ansible."
+    #   become: true
+    #   raw: "sudo yum -y install python"
 
   roles:
     - configure-server
