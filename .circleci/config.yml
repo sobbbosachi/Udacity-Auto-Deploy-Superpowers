@@ -154,20 +154,14 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople" \
               --output text >> ./.circleci/ansible/inventory.txt
-
+            cat ./.circleci/ansible/inventory.txt
+            
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
             #exit 1
-
-      - run:
-          name: store the backend ip address to memstash so that frontend can use it. 
-          command: |
-            chmod 777 bkmemstash.sh
-            ./bkmemstash.sh
-            cat inventory.txt
 
       - attach_workspace:
           at: ~/
