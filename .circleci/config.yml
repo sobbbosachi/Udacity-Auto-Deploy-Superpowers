@@ -190,9 +190,7 @@ jobs:
           command: |
             #!/bin/bash
             ipaddress=$( tail -n 1 inventory.txt)
-            ipaddress1=$( tail -n 1 ./.circleci/ansible/inventory.txt)
             echo $ipaddress
-            echo $ipaddress1
             curl -H "Content-Type: text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data $ipaddress https://api.memstash.io/values/$ipaddress
       - persist_to_workspace:
           root: ~/
@@ -219,6 +217,7 @@ jobs:
       - env-file
       - run:
           name: Configure server
+          no_output_timeout: 30m
           command: |
             echo ENVIROMENT=production > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
@@ -232,6 +231,122 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd .circleci/ansible/
             ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
+      - revert-migrations
+
+  run-migrations:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm i
+            npm run migrations
+      - run:
+          name: Send migration results to memstash
+          command: |
+            curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data "true" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7}
+            #exit 1
+      - destroy-environment
+      - revert-migrations
+
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
+
+  deploy-backend:
+    docker:
+      # Docker image here that supports Ansible
+    steps:
+      # Checkout code from git
+      # Add ssh keys with fingerprint
+      # attach workspace
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Deploy backend
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
+
+  smoke-test:
+    docker:
+      # Lightweight Docker image
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+      - run:
+          name: Backend smoke test.
+          command: |
+            # your code here
+      - run:
+          name: Frontend smoke test.
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
+
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
+
+cleanup:
+  docker:
+    # Docker image here
+  steps:
+    # Checkout code from git
+    - run:
+        name: Get old stack workflow id
+        command: |
+          # your code here
+          export OldWorkflowID="the id here"
+          export STACKS=[] #put the list of stacks here
+    - run:
+        name: Remove old stacks and files
+        command: |
+          if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+          then
+            # your code here
+          fi
 
 workflows:
   default:
