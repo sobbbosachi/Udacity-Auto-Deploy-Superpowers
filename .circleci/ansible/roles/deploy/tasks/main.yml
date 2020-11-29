@@ -9,7 +9,7 @@
     archive: no
     recursive: yes
 
-- name: start pm2 for dist/main.js
+- name: Start pm2
   become: no
   shell: pm2 start main.js
   args:
