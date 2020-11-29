@@ -31,15 +31,15 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS==1 )); 
-            then
+            #SUCCESS = 1
+            #if(( $SUCCESS==1 )); 
+            #then
             cd ~/project/backend
             npm install
             npm run migrations:revert
             npm run migrations:revert
             exit 1
-            fi
+            #fi
 
 jobs:
   build-frontend:
