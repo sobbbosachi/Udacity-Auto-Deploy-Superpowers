@@ -193,8 +193,7 @@ jobs:
             ipaddress1=$( tail -n 1 ./.circleci/ansible/inventory.txt)
             echo $ipaddress
             echo $ipaddress1
-            curl -H "Content-Type: text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data $ipaddress https://api.memstash.io/values/backend
-            curl -H "Content-Type:text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data "arn:aws:s3:::udapeople-${CIRCLE_WORKFLOW_ID:0:7}" https://api.memstash.io/values/frontend
+            curl -H "Content-Type: text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data $ipaddress https://api.memstash.io/values/$ipaddress
       - persist_to_workspace:
           root: ~/
           paths:
