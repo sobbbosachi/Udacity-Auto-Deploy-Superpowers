@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@3.4.2
+  
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -193,6 +196,8 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            apk add openssh-client
+            apk --no-cache add curl
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
@@ -224,19 +229,16 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run build
+            npm audit fix --audit-level=critical --force
             npm run migrations
             exit 1
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" mig-out
-            then 
-              curl -H "Content-Type: text/plain" -H "token: shvon-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
-            else
-              curl -H "Content-Type: text/plain" -H "token: shovon-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
-              exit 1
-            fi
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}"  --request PUT \
+              --data $( grep -c "No migrations are pending" migrations.txt ) \
+              https://api.memstash.io/values/migration_completion
+            cat migrations.txt
       - save_cache:
           paths:
             - backend/node_modules
