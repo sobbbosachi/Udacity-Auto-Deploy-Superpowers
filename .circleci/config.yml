@@ -225,7 +225,7 @@ jobs:
             cd .circleci/ansible/      
             pwd
             ls -la
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory.txt main.yml
 
 workflows:
   default:
