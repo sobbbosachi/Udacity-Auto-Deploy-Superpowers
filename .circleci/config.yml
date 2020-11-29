@@ -221,6 +221,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            chmod 700
             cd .circleci/ansible/      
             pwd
             ls -la
