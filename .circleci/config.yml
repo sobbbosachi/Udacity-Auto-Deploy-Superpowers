@@ -129,7 +129,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum install -y tar
+      - run: yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -174,9 +174,10 @@ jobs:
             curl -H "Content-Type: text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data $ipaddress https://api.memstash.io/values/backend
             curl -H "Content-Type:text/plain" -H "token:100754a2-c8e8-47f6-acc3-471691e1eb0e" --request PUT --data "arn:aws:s3:::udapeople-${CIRCLE_WORKFLOW_ID:0:7}" https://api.memstash.io/values/frontend
       - persist_to_workspace:
-          root: .circleci/ansible/
+          root: ~/
           paths:
-            - inventory.txt
+            - project/AWS_IP
+            - project/.circleci/ansible/inventory.txt
       - destroy-environment
       # Here's where you will add some code to rollback on failure
 
