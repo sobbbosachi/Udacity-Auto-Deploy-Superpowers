@@ -198,7 +198,7 @@ jobs:
             apk --no-cache add curl
             apk add --no-cache tar gzip
             apk add --update ansible
-            #exit 1
+            pip3 install --user awscli
       - run:
           name: Configure server
           command: |
@@ -220,6 +220,7 @@ jobs:
       - revert-migrations:
           to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment:
+          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
           front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
