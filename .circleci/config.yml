@@ -217,7 +217,8 @@ jobs:
             ls -la
             ansible-playbook -i inventory.txt configure-server.yml
             #exit 1
-      - revert-migrations
+      - revert-migrations:
+          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment
 
   run-migrations:
