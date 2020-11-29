@@ -193,7 +193,10 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            #pip3 install --user awscli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
       - run:
           name: Configure server
           command: |
@@ -219,6 +222,11 @@ jobs:
     - image: circleci/node:13.8.0
     steps:
       - checkout
+
+      - restore_cache:
+          keys: |
+            backend-build
+
       - run:
           name: Run migrations
           command: |
@@ -237,9 +245,38 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: shovon-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
               exit 1
             fi
-      - revert-migrations
+      - save_cache:
+          paths:
+            - backend/node_modules
+          key: backend-build
       - destroy-environment
+      - revert-migrations
       # Here's where you will add some code to rollback on failure
+
+  deploy-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - frontend-build
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
+
 
 workflows:
   default:
