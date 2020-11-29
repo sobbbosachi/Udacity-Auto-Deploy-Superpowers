@@ -211,7 +211,7 @@ jobs:
             cd .circleci/ansible/      
             pwd
             ls -la
-            ansible-playbook -i ~/project/inventory  main.yml
+            ansible-playbook -i ./.circleci/ansible/inventory.txt  main.yml
             exit 1
       - destroy-environment
       - revert-migrations
