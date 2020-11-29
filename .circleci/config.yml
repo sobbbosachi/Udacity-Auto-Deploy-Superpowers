@@ -38,7 +38,7 @@ commands:
             #then
             cd ~/project/backend
             npm install
-            npm run migrations:revert
+            npm --version
             npm run migrations:revert
             exit 1
             #fi
@@ -190,15 +190,13 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"]
+          fingerprints: 
+            - "4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"
       - attach_workspace:
           at: ~/
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache --upgrade bash
-            apk --no-cache add curl
-            apk add --no-cache tar gzip
             apk add --update ansible
             pip3 install --user awscli
       - run:
@@ -218,12 +216,6 @@ jobs:
             pwd
             ls -la
             ansible-playbook -i inventory.txt configure-server.yml
-            #exit 1
-      - revert-migrations:
-          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-          front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
     docker:
