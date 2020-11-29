@@ -218,6 +218,7 @@ jobs:
       - image: circleci/node
     steps:
       - checkout
+      - run: pip install awscli
       - run:
           name: Run migrations
           command: |
