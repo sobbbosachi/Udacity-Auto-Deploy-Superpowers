@@ -179,7 +179,7 @@ jobs:
               --output text >> ./.circleci/ansible/inventory.txt
             cat ./.circleci/ansible/inventory.txt
 
-            export BACKEND_IP=$(aws ec2 describe-instances \
+            export BACKEND_URL=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
@@ -255,23 +255,32 @@ jobs:
 
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
+      - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            apk add --update tar gzip ansible nodejs npm curl
       - run:
           name: Get backend url
           command: |
-            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
+            cd frontend
+            npm install
+            npm run build
+            cd dist
+            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}" --delete
+      - destroy-environment
+      - revert-migration
       # Here's where you will add some code to rollback on failure
 
   deploy-backend:
@@ -314,20 +323,20 @@ jobs:
             # your code here
       # Here's where you will add some code to rollback on failure
 
-  cloudfront-update:
-    docker:
-      # Docker image here that supports AWS CLI
-    steps:
-      # Checkout code from git
-      - run:
-          name: Install dependencies
-          command: |
-            # your code here
-      - run:
-          name: Update cloudfront distribution
-          command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure
+  # cloudfront-update:
+  #   docker:
+  #     # Docker image here that supports AWS CLI
+  #   steps:
+  #     # Checkout code from git
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # your code here
+  #     - run:
+  #         name: Update cloudfront distribution
+  #         command: |
+  #           # your code here
+  #     # Here's where you will add some code to rollback on failure
 
 cleanup:
   docker:
@@ -367,8 +376,8 @@ workflows:
           filters:
             branches:
               only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
