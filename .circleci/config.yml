@@ -219,7 +219,8 @@ jobs:
             #exit 1
       - revert-migrations:
           to: udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment
+      - destroy-environment:
+          front: udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
     docker:
