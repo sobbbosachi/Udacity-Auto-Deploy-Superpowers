@@ -27,8 +27,7 @@
 
     - name: "install python for Ansible."
       become: true
-      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
-      changed_when: false
+      raw: "sudo yum -y install python"
 
   roles:
     - configure-server

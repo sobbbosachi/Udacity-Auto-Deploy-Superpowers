@@ -41,7 +41,7 @@ commands:
             exit 1
             #fi
 
-  write-envvars-file:
+  env-file:
     description: Command used for creating env file
     steps:
       - run:
@@ -216,7 +216,7 @@ jobs:
             apk add --update tar gzip ansible nodejs npm curl
             pip install awscli
 
-      - write-envvars-file
+      - env-file
       - run:
           name: Configure server
           command: |
