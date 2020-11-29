@@ -226,7 +226,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
-            npm run migrations
+            npm run migrations > migrations.txt 
             exit 1
       - run:
           name: Send migration results to memstash
@@ -241,6 +241,8 @@ jobs:
           key: backend-build
       - destroy-environment
       - revert-migrations
+      - slack/status:
+          fail_only: true
       # Here's where you will add some code to rollback on failure
 
   deploy-frontend:
@@ -290,8 +292,8 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
