@@ -216,7 +216,7 @@ jobs:
       - env-file
       - run:
           name: Configure server
-          #no_output_timeout: 30m
+          no_output_timeout: 30m
           command: |
             echo ENVIROMENT=production > "backend/.env"
             echo "Hello, good morning"
