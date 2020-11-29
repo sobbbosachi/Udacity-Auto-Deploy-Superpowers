@@ -215,14 +215,6 @@ jobs:
           command: |
             apk add --update tar gzip ansible nodejs npm curl
             pip install awscli
-      - run:
-          name: Set up inventory file
-          command: |
-            cd .circleci/ansible
-            echo "[web]" >> inventory.txt
-            URLS=$(curl -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
-            echo "$URLS" >> inventory.txt
-            cat inventory.txt
 
       - write-envvars-file
       - run:
