@@ -29,7 +29,6 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            pip3 install --user awscli
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             #SUCCESS = 1
             #if(( $SUCCESS==1 )); 
