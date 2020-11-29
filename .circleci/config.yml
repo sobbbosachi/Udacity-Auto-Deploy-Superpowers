@@ -159,7 +159,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
-            exit 1
+            #exit 1
       - persist_to_workspace:
           root: .circleci/ansible/ 
           paths:
@@ -183,7 +183,7 @@ jobs:
             apk --no-cache add curl
             apk add --no-cache tar gzip
             apk add --update ansible
-            exit 1
+            #exit 1
       - run:
           name: Configure server
           command: |
