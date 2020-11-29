@@ -182,13 +182,13 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.8.6-alpine3.12
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["4f:c1:9c:5b:6b:1b:74:72:d1:3c:3d:61:09:1f:20:74"]
       - attach_workspace:
-          at: .circleci/ansible/
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -213,10 +213,32 @@ jobs:
             cd .circleci/ansible/      
             pwd
             ls -la
-            ansible-playbook -i inventory.txt main.yml
+            ansible-playbook -i inventory.txt configure-server.yml
+            #exit 1
+      - revert-migrations:
+          workflow-id-7: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          workflow-id-7: ${CIRCLE_WORKFLOW_ID:0:7}
+
+  run-migrations:
+    docker:
+    - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: |
+            backend-build
+      - run:
+          name: Run migrations
+          command: |
+            # Your code here
             exit 1
-      - destroy-environment
-      - revert-migrations
+      - run:
+          name: Send migration results to memstash
+          command: |
+            # Your code here
+            exit 1
+      # Here's where you will add some code to rollback on failure
 
 workflows:
   default:
