@@ -1,0 +1,53 @@
+---
+- name: "update apt packages."
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes
+
+
+- name: "install node 12.X"
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    sudo apt -y upgrade
+    sudo apt install -y nodejs
+- name: "install python."
+  become: true
+  apt:
+    name: ["python3"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+#- name: Insert/Update ENVIRONMENT variables surrounded by custom markers after <body> line
+#  blockinfile:
+#    path: ~/.profile
+#    block: |
+#       export ENVIRONMENT=production
+#       export TYPEORM_CONNECTION=postgres
+#       export TYPEORM_MIGRATIONS_DIR=./src/migrations
+#       export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
+#       export TYPEORM_MIGRATIONS=./src/migrations/*.ts
+#       export TYPEORM_HOST=udapeople-prod.cckjtjunno1j.ap-south-1.rds.amazonaws.com
+#       export TYPEORM_PORT=5432
+#       export TYPEORM_USERNAME=postgres
+#       export TYPEORM_PASSWORD=udapeople123
+#       export TYPEORM_DATABASE=udapeople-prod
+#    marker: "# {mark} ANSIBLE MANAGED BLOCK "
+    
