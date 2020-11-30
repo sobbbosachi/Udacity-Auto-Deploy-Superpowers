@@ -195,7 +195,6 @@ jobs:
           name: Configure server
           no_output_timeout: 30m
           command: |
-            export ANSIBLE_HOST_KEY_CHECKING=False
             cd .circleci/ansible/
             ansible-playbook -i inventory.txt configure-server.yml
       #- destroy-environment
