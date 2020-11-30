@@ -33,4 +33,3 @@
 
   roles:
     - configure-server
-    - deploy
