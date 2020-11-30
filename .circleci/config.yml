@@ -209,12 +209,17 @@ jobs:
           command: |
             cd backend
             npm i
-            npm run migrations
+            npm run migrations | tee mig-out
       - run:
           name: Send migration results to memstash
           command: |
-            curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data "true" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7}
-            #exit 1
+            if grep "has been executed successfully" mig-out
+            then 
+              curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
+            else
+              curl -H "Content-Type: text/plain" -H "token: jimgrate-${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "failed" https://api.memstash.io/values/migrate-succeeded
+              exit 1
+            fi
       - destroy-environment
       - revert-migrations
 
