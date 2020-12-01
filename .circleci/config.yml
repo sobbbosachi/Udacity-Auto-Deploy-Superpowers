@@ -229,8 +229,10 @@ jobs:
               echo "Send migration results to memstash: failed"
               exit 1
             fi
+            
             URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
             echo "$URLS"
+
       - save_cache:
           key: node_modules
           paths:
