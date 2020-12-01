@@ -218,20 +218,20 @@ jobs:
           name: Send migration results to memstash
           command: |
             cd backend
-            # cat migrations.txt
-            migration=$( tail -n 1 migrations.txt)
-            echo $migration
-            if echo "$migration" | grep -q "has been executed successfully"; then 
-              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration
-              echo "Send migration results to memstash: successful"
-            else
-              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration
-              echo "Send migration results to memstash: failed"
-              exit 1
-            fi
-            
-            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
-            echo "$URLS"
+            cat migrations.txt
+            # migration=$( tail -n 1 migrations.txt)
+            # echo $migration
+            # if echo "$migration" | grep -q "has been executed successfully"; then 
+            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration
+            #   echo "Send migration results to memstash: successful"
+            # else
+            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration
+            #   echo "Send migration results to memstash: failed"
+            #   exit 1
+            # fi
+
+            # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
+            # echo "$URLS"
 
       - save_cache:
           key: node_modules
