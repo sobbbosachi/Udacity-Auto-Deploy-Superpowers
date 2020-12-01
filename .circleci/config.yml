@@ -208,6 +208,7 @@ jobs:
             backend-build
       - run: sudo install awscli
       - run: sudo pip install awscli
+      - run: install python and awscli 
       - run:
           name: Run migrations
           command: |
@@ -218,13 +219,13 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" mig-out
-            then 
-              curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
-            else
-              curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/migrate-failed
-              exit 1
-            fi
+            # if grep "has been executed successfully" mig-out
+            # then 
+            #   curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
+            # else
+            #   curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/migrate-failed
+            #   exit 1
+            # fi
             exit 1
       - save_cache:
           key: node_modules
@@ -357,10 +358,10 @@ workflows:
           filters:
             branches:
               only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      - run-migrations
+          #requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
