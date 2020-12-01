@@ -145,7 +145,6 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -161,16 +160,13 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
-            #exit 1
       - run:
           name: Store the backend ip address to memstash so that frontend can use it. 
           command: |
             #!/bin/bash
             ipaddress=$( tail -n 1 inventory.txt)
             echo $ipaddress
-            curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data $ipaddress https://api.memstash.io/values/ipaddress
-            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
-            echo "$URLS"   
+            curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data $ipaddress https://api.memstash.io/values/ipaddress 
       - persist_to_workspace:
           root: ~/
           paths:
@@ -226,15 +222,15 @@ jobs:
             migration=$( tail -n 1 migrations.txt)
             echo $migration
             if echo "$migration" | grep -q "has been executed successfully"; then 
-              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "1" https://api.memstash.io/values/migration_succeeded
+              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "1" https://api.memstash.io/values/migration
               echo "Send migration results to memstash: successful"
             else
-              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "0" https://api.memstash.io/values/migration_failed
+              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "0" https://api.memstash.io/values/migration
               echo "Send migration results to memstash: failed"
               exit 1
             fi
-            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_succeeded)
-            echo "$URLS"   
+            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
+            echo "$URLS"
       - save_cache:
           key: node_modules
           paths:
