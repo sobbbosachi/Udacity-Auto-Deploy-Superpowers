@@ -214,18 +214,20 @@ jobs:
             cd backend
             npm i
             npm run build
-            npm run migrations | tee mig-out
+            npm run migrations
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" mig-out
+            if grep "has been executed successfully"
             then 
-              curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "succeeded" https://api.memstash.io/values/migrate-succeeded
+              curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f --request PUT --data "succeeded" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              echo "Send migration results to memstash: successful"
             else
-              curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/migrate-failed
+              curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f --request PUT --data "failed" https://api.memstash.io/values/migration_failed_${CIRCLE_WORKFLOW_ID}
+              echo "Send migration results to memstash: failed"
               exit 1
             fi
-            exit 1
+            exit 1#cancel intentional
       - save_cache:
           key: node_modules
           paths:
@@ -242,6 +244,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli
       - run:
           name: Get backend url
           command: |
