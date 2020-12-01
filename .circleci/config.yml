@@ -168,7 +168,7 @@ jobs:
             #!/bin/bash
             ipaddress=$( tail -n 1 inventory.txt)
             echo $ipaddress
-            curl -H "Content-Type: text/plain" -H "token:1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data $ipaddress https://api.memstash.io/values/$ipaddress
+            curl -H "Content-Type: text/plain" -H "token:59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5" --request PUT --data $ipaddress https://api.memstash.io/values/$ipaddress
       - persist_to_workspace:
           root: ~/
           paths:
@@ -224,24 +224,15 @@ jobs:
             migration=$( tail -n 1 migrations.txt)
             echo $migration
             if echo "$migration" | grep -q "has been executed successfully"; then 
-              curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f --request PUT --data "succeeded" https://api.memstash.io/values/1
+              curl -H "Content-Type: text/plain" -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5 --request PUT --data "succeeded" https://api.memstash.io/values/1
               echo "Send migration results to memstash: successful"
             else
-              curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f --request PUT --data "failed" https://api.memstash.io/values/migration_failed_${CIRCLE_WORKFLOW_ID}
+              curl -H "Content-Type: text/plain" -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5 --request PUT --data "failed" https://api.memstash.io/values/migration_failed_${CIRCLE_WORKFLOW_ID}
               echo "Send migration results to memstash: failed"
               exit 1
             fi
-            URLS=$(curl -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request GET https://api.memstash.io/values/1)
-            echo "$URLS"
-      - run:
-          name: RESULT
-          command: |
-            cd backend
-            cat migrations.txt
-            migration=$( tail -n 1 migrations.txt)
-            echo $migration
-
-            #exit 1     
+            URLS=$(curl -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5" --request GET https://api.memstash.io/values/1)
+            echo "$URLS"   
       - save_cache:
           key: node_modules
           paths:
