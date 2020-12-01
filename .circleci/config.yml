@@ -224,14 +224,14 @@ jobs:
             migration=$( tail -n 1 migrations.txt)
             echo $migration
             if echo "$migration" | grep -q "has been executed successfully"; then 
-              curl -H "Content-Type: text/plain" -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5 --request PUT --data "succeeded" https://api.memstash.io/values/1
+              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "succeeded" https://api.memstash.io/values/1
               echo "Send migration results to memstash: successful"
             else
-              curl -H "Content-Type: text/plain" -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5 --request PUT --data "failed" https://api.memstash.io/values/migration_failed_${CIRCLE_WORKFLOW_ID}
+              curl -H "Content-Type: text/plain" -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad --request PUT --data "failed" https://api.memstash.io/values/1)
               echo "Send migration results to memstash: failed"
               exit 1
             fi
-            URLS=$(curl -H "token: 59b582f6-b3c9-4da8-b8ac-d3c31cd4dbb5" --request GET https://api.memstash.io/values/1)
+            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/1)
             echo "$URLS"   
       - save_cache:
           key: node_modules
