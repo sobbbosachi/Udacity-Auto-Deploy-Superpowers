@@ -206,7 +206,6 @@ jobs:
       - restore_cache:
           keys: |
             backend-build
-      - run: sudo pip install awscli
       - run: install python and awscli 
       - run:
           name: Run migrations
