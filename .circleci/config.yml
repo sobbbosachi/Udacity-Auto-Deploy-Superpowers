@@ -234,7 +234,15 @@ jobs:
             curl -H "Content-Type: text/plain" -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request PUT --data "true" https://api.memstash.io/values/$migration
             URLS=$(curl -H "token: 1ee08d36-38af-43ec-bcab-8fdf47b7d94f" --request GET https://api.memstash.io/values/1)
             echo "$URLS"
-            #exit 1
+      - run:
+          name: RESULT
+          command: |
+            cd backend
+            cat migrations.txt
+            migration=$( tail -n 1 migrations.txt)
+            echo $migration
+
+            #exit 1     
       - save_cache:
           key: node_modules
           paths:
