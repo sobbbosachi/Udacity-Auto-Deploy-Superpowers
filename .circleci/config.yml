@@ -366,11 +366,11 @@ workflows:
           filters:
             branches:
               only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations:
+      - configure-infrastructure:
           requires: [deploy-infrastructure]
-          #requires: [configure-infrastructure]
+      - run-migrations:
+          #requires: [deploy-infrastructure]
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
