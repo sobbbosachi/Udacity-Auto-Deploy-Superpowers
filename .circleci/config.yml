@@ -360,7 +360,8 @@ workflows:
               only: [main]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
-      - run-migrations
+      - run-migrations:
+          requires: [deploy-infrastructure]
           #requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
