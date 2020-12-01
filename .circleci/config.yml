@@ -203,12 +203,16 @@ jobs:
       - image: circleci/node
     steps:
       - checkout
+      - restore_cache:
+          keys: |
+            backend-build
       - run: pip install awscli
       - run:
           name: Run migrations
           command: |
             cd backend
             npm i
+            npm run build
             npm run migrations | tee mig-out
       - run:
           name: Send migration results to memstash
@@ -220,6 +224,7 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: migration_${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/migrate-failed
               exit 1
             fi
+            exit 1
       - destroy-environment
       - revert-migrations
 
@@ -349,8 +354,8 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
