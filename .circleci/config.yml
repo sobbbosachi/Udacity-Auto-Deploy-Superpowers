@@ -286,7 +286,6 @@ jobs:
             ls -ll
             cd backend
             ls -ll
-            cd backend
             npm i
             npm run build
             cd dist
