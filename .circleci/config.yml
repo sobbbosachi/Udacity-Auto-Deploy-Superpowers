@@ -291,26 +291,28 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl
+            apk add --update curl
             pip install awscli
       - run:
           name: Get backend url & Backend smoke test.
           command: |
             BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
-            export BACKEND_URL="http://${BACKEND_IP}:3030/api/status"
-            curl "http://${BACKEND_IP}:3030/api/status"
+            echo "${BACKEND_IP}"
+            export BACKEND_URL="http://${BACKEND_IP}:3000/api/status"
+            curl "http://${BACKEND_IP}:3000/api/status"
 
       - run:
           name: Frontend smoke test.
           command: |
-            export URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com/#/employees"
+            #export URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-eu-central-1.amazonaws.com/#/employees"
             if curl -s $URL | grep "Welcome"
             then
               exit 0
             else
               exit 1
             fi
-      # Here's where you will add some code to rollback on failure
+      - destroy-environment
 
   cloudfront-update:
     docker:
@@ -349,35 +351,35 @@ cleanup:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      - deploy-infrastructure
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # requires: [build-frontend, build-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     #requires: [deploy-infrastructure]
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-            # requires: [deploy-infrastructure]
-      #     requires: [run-migrations]
-      - deploy-backend:
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
           requires: [deploy-infrastructure]
-          #requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - run-migrations:
+          requires: [configure-infrastructure]
+          #requires: [deploy-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

@@ -31,4 +31,5 @@
       changed_when: false
 
   roles:
+    - configure-server
     - deploy

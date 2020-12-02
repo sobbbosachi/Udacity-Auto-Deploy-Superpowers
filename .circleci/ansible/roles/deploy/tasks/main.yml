@@ -1,47 +1,30 @@
 ---
-- name: "update apt packages."
-  become: yes
-  apt:
-    update_cache: yes
+# - name: "update apt packages."
+#   become: yes
+#   apt:
+#     update_cache: yes
 
-- name: "upgrade packages"
-  become: yes
-  apt:
-    upgrade: yes
+# - name: "upgrade packages"
+#   become: yes
+#   apt:
+#     upgrade: yes
 
 - name: Copy backend dist files to remote server
   copy:
     src: /root/project/backend
     dest: /home/ubuntu
 
-# - name: Install Node modules
+- name: Install Node modules
+  shell: |
+    cd /home/ubuntu/backend
+    npm install
+
+# - name: Install Node Dependencies
 #   shell: |
 #     cd /home/ubuntu/backend
 #     npm install
 
-- name: "install nodejs"
-  become: yes
-  apt:
-    name: "nodejs"
-    state: present
-    update_cache: yes
-
-- name: "install npm"
-  become: yes
-  apt:
-    name: "npm"
-    state: present
-    update_cache: yes
-
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-    
-- name: Building node services
+- name: Building backend service
   shell: |
     cd /home/ubuntu/backend
     npm run build
