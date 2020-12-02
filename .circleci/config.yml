@@ -12,6 +12,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name  udapeople-backend-prod-<< parameters.workflow-id >>
             aws cloudformation delete-stack --stack-name  udapeople-frontend-prod-<< parameters.workflow-id >>
 
@@ -267,21 +268,26 @@ jobs:
           fingerprints: ["5d:50:40:94:25:ca:65:12:c3:7a:67:10:4e:23:62:80"]
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt update
-            sudo apt install python-pip python-dev
-            sudo pip install awscli
-            sudo apt install -y ansible
-            sudo apt install -y rsync
-            cd backend
-            npm i
-            npm run build
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       sudo apt update
+      #       sudo apt install python-pip python-dev
+      #       sudo pip install awscli
+      #       sudo apt install -y ansible
+      #       sudo apt install -y rsync
+      #       cd backend
+      #       npm i
+      #       npm run build
       - run:
           name: Deploy backend
           command: |
             cd backend/dist
+            ls -ll
+            cd ..
+            ls -ll
+            cd ~
+            ls -ll
             echo ENVIRONMENT=production > .env
             echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
             echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> .env
@@ -290,7 +296,7 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
-            cd ..
+            cd .. & cd ..
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
             # your code here
             exit 1
@@ -367,7 +373,7 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
+      # - deploy-infrastructure
           # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # requires: [build-frontend, build-backend]
       #     filters:
@@ -378,8 +384,8 @@ workflows:
       # - run-migrations:
       #     #requires: [deploy-infrastructure]
       #     requires: [configure-infrastructure]
-      - deploy-frontend:
-            requires: [deploy-infrastructure]
+      - deploy-frontend
+            # requires: [deploy-infrastructure]
       #     requires: [run-migrations]
       # - deploy-backend:
       #     requires: [deploy-infrastructure]
