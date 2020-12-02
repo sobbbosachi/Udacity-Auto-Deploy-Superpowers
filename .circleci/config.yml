@@ -250,14 +250,12 @@ jobs:
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-            #echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
             cd frontend
-            ls -ll
-            npm install
-            npm update
+            #npm install
+            #npm update
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
-            aws s3 sync dist s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+            #aws s3 sync . s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --delete
             #exit 1
       - destroy-environment
       - revert-migrations
