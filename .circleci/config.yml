@@ -297,7 +297,7 @@ jobs:
             # your code here
             #exit 1
       - destroy-environment
-      - revert-migration
+      - revert-migrations
 
   smoke-test:
     docker:
