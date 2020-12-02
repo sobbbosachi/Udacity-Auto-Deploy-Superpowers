@@ -260,7 +260,7 @@ jobs:
             #aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}" --delete
             exit 1
       - destroy-environment
-      - revert-migration
+      - revert-migrations
 
   deploy-backend:
     docker:
