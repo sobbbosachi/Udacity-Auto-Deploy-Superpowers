@@ -1,5 +1,8 @@
 ---
-
+- name: install the latest version of rsync
+  yum:
+    name: rsync
+    state: latest
 - name: sync node install including node_modules
   become: no
   synchronize:
