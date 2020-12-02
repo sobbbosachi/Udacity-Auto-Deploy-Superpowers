@@ -259,7 +259,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - restore_cache:
@@ -271,33 +271,14 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            #sudo apt update
-            sudo apt install python-pip python-dev
-            sudo pip install awscli
-            sudo apt install -y ansible
-            sudo apt install -y rsync
-            cd backend
-            npm i
-            npm run build
+            apk add --update tar gzip ansible curl
+            pip install awscli 
       - run:
           name: Deploy backend
-          no_output_timeout: 30m
           command: |
-            # cd backend
-            # npm i
-            # npm run build
-            # cd dist
-            # echo ENVIRONMENT=production > .env
-            # echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
-            # echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> .env
-            # echo TYPEORM_HOST=$TYPEORM_HOST >> .env
-            # echo TYPEORM_PORT=$TYPEORM_PORT >> .env
-            # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
-            # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
-            # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
-            #your code here
-            exit 1
+            cd .circleci/ansible/
+            ansible-playbook -i inventory.txt deploy-backend.yml
+            #exit 1
       - destroy-environment
       - revert-migrations
 
