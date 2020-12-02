@@ -255,7 +255,7 @@ jobs:
             npm install
             npm update
             npm run build
-            aws s3 cp dist s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
             #aws s3 sync . s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive --acl public-read
             #exit 1
       - destroy-environment
