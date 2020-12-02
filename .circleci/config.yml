@@ -264,8 +264,8 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      - add_ssh_keys:
-          fingerprints: ["5d:50:40:94:25:ca:65:12:c3:7a:67:10:4e:23:62:80"]
+      # - add_ssh_keys:
+      #     fingerprints: ["5d:50:40:94:25:ca:65:12:c3:7a:67:10:4e:23:62:80"]
       - attach_workspace:
           at: ~/
       # - run:
@@ -284,7 +284,9 @@ jobs:
           command: |
             pwd
             ls -ll
-            cd backend/dist
+            cd backend
+            ls -ll
+            cd dist
             ls -ll
             cd ..
             ls -ll
