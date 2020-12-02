@@ -209,8 +209,9 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            touch migrations.txt
             npm i
-            npm run migrations
+            npm run migrations >> migrations.txt
 
       - run:
           name: Send migration results to memstash
@@ -239,14 +240,13 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl
-            pip install awscli
+            sudo pip install awscli
       - run:
           name: Get backend url
           command: |
@@ -254,14 +254,14 @@ jobs:
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-            echo "API_URL=$API_URL" > frontend/.env
-            exit 1 
+            exit 1
       - run:
           name: Deploy frontend objects
           command: |
             cd frontend
             npm install
             npm run build
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive --acl public-read
             #aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}" --delete
       - destroy-environment
       - revert-migration
