@@ -286,6 +286,9 @@ jobs:
             ls -ll
             cd backend
             ls -ll
+            cd backend
+            npm i
+            npm run build
             cd dist
             ls -ll
             cd ..
@@ -304,8 +307,8 @@ jobs:
             # ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
             #your code here
             exit 1
-      - destroy-environment
-      - revert-migrations
+      #- destroy-environment
+      #- revert-migrations
 
   smoke-test:
     docker:
