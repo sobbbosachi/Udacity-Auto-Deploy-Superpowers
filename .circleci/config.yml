@@ -312,12 +312,6 @@ jobs:
             apk add --update curl
             pip install awscli
       - run:
-          name: Get backend url & Backend smoke test.
-          command: |
-            BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
-            echo "${BACKEND_IP}"
-            curl "http://${BACKEND_IP}:3000/api/status"
-      - run:
           name: Frontend smoke test.
           command: |
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3.eu-central-1.amazonaws.com/index.html#/employees"
@@ -328,6 +322,12 @@ jobs:
             else
               exit 1
             fi
+      - run:
+          name: Get backend url & Backend smoke test.
+          command: |
+            BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
+            echo "${BACKEND_IP}"
+            curl "http://${BACKEND_IP}:3000/api/status"
       - destroy-environment
       - revert-migrations
 
@@ -343,7 +343,6 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
@@ -358,7 +357,13 @@ jobs:
               --tags project=udapeople \
               --stack-name udapeople-cloudfront \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-            
+
+            if [[ "${STACKS[@]}" =~ "${WORKFLOWID}" ]]
+            then
+              aws s3 rm s3://udapeople-jims-id-${WORKFLOWID} --recursive --no-paginate --output text
+              aws cloudformation delete-stack --stack-name jims-back-end-${WORKFLOWID}
+              aws cloudformation delete-stack --stack-name jims-front-end-${WORKFLOWID}
+            fi
       - destroy-environment
       - revert-migrations
 
@@ -384,36 +389,36 @@ cleanup:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # # - test-frontend:
-      # #     requires: [build-frontend]
-      # # - test-backend:
-      # #     requires: [build-backend]
-      # # - scan-backend:
-      # #     requires: [build-backend]
-      # # - scan-frontend:
-      # #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     requires: [build-frontend, build-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      - smoke-test
-          #requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+          #requires: [deploy-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
