@@ -201,13 +201,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: |
-            backend-build
+          keys: backend-build
       - run: sudo apt install python-pip python-dev
       - run: sudo pip install awscli
       - run:
           name: Run migrations
           command: |
+            echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
             cd backend
             touch migrations.txt
             npm i
@@ -230,7 +230,7 @@ jobs:
             # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
             # echo "${URLS}"
       # - save_cache:
-      #     key: node_modules
+      #     key: backend-build
       #     paths:
       #       - backend/node_modules
       - run: exit 1
