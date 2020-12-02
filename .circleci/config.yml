@@ -280,6 +280,10 @@ jobs:
             sudo pip install awscli
             npm install
             sudo apt install -y ansible
+            sudo apt install -y rsync
+            cd backend
+            npm i
+            npm run build
       - run:
           name: Deploy backend
           command: |
