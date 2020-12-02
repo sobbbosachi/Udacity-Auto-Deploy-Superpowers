@@ -14,46 +14,47 @@
     src: /root/project/backend
     dest: /home/ubuntu
 
-- name: Install Node modules
-  shell: |
-    cd /home/ubuntu/backend
-    ls -la
-    printenv
-    npm install
+# - name: Install Node modules
+#   shell: |
+#     cd /home/ubuntu/backend
+#     npm install
+
+- name: "install nodejs"
+  become: yes
+  apt:
+    name: "nodejs"
+    state: present
+    update_cache: yes
+
+- name: "install npm"
+  become: yes
+  apt:
+    name: "npm"
+    state: present
+    update_cache: yes
+
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
     
-- name: building node services
+- name: Building node services
   shell: |
     cd /home/ubuntu/backend
     npm run build
-    npm run prestart:prod
-
-# - name: "run migrations again"
-#   shell: |
-#     cd /home/ubuntu/backend
-#     npm run migrations
     
 - name: Executing node
   become: true
   shell: |
     cd /home/ubuntu/backend 
-    pm2 start npm --name backend -- start
+    pm2 start npm --name "backend" -- run start
     pm2 ls
-# ---
-# - name: install the latest version of rsync
-#   yum:
-#     name: rsync
-#     state: latest
-# - name: sync node install including node_modules
-#   become: no
-#   synchronize:
-#     src: ~/project/backend/
-#     dest: /home/ubuntu/backend
-#     checksum: no
-#     archive: no
-#     recursive: yes
 
-# - name: Start pm2
-#   become: no
-#   shell: pm2 start main.js
-#   args:
-#     chdir: /home/ubuntu/backend/dist
+- name: start pm2 for dist/main.js
+  become: no
+  shell: pm2 start main.js
+  args:
+    chdir: /home/ubuntu/backend/dist
