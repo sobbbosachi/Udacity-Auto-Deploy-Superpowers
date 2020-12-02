@@ -361,7 +361,7 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
+      #- deploy-infrastructure
           #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # requires: [build-frontend, build-backend]
           # filters:
@@ -372,8 +372,8 @@ workflows:
       # - run-migrations:
       #     #requires: [deploy-infrastructure]
       #     requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [deploy-infrastructure]
+      - deploy-frontend
+          #requires: [deploy-infrastructure]
           #requires: [run-migrations]
       # - deploy-backend:
       #     requires: [run-migrations]
