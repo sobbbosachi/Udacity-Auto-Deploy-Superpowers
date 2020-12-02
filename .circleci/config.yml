@@ -275,7 +275,7 @@ jobs:
             sudo apt install python-pip python-dev
             sudo pip install awscli
             sudo apt install -y ansible
-            #sudo apt install -y rsync
+            sudo apt install -y rsync
             cd backend
             npm i
             npm run build
