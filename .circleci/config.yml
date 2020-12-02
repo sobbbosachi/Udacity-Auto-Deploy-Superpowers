@@ -207,7 +207,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
+            #echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
             cd backend
             touch migrations.txt
             npm i
@@ -221,19 +221,16 @@ jobs:
             # echo $migration
             # if echo "$migration" | grep -q "has been executed successfully"; then 
             #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration
-            #   echo "Send migration results to memstash: successful"
             # else
             #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration
-            #   echo "Send migration results to memstash: failed"
             #   exit 1
             # fi
             # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
             # echo "${URLS}"
-      # - save_cache:
-      #     key: backend-build
-      #     paths:
-      #       - backend/node_modules
-      - run: exit 1
+      - save_cache:
+          key: backend-build
+          paths:
+            - backend/node_modules
       - destroy-environment
       - revert-migrations
 
@@ -261,6 +258,7 @@ jobs:
             npm run build
             aws s3 cp dist s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive --acl public-read
             #aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}" --delete
+            exit 1
       - destroy-environment
       - revert-migration
 
@@ -346,29 +344,29 @@ cleanup:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     #requires: [build-frontend, build-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
           #requires: [deploy-infrastructure]
-          #requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
       # - deploy-backend:
       #     requires: [run-migrations]
       # - smoke-test:
