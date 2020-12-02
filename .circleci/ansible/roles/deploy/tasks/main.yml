@@ -9,6 +9,13 @@
 #   apt:
 #     upgrade: yes
 
+- name: "install dependencies."
+  become: true
+  apt:
+    name: ["nodejs", "npm", "tar"]
+    state: latest
+    update_cache: yes
+
 - name: Copy backend dist files to remote server
   copy:
     src: /root/project/backend
@@ -23,12 +30,14 @@
   shell: |
     cd /home/ubuntu/backend
     npm run build
+    npm run prestart:prod
     
 - name: Executing node
   become: true
   shell: |
-    cd /home/ubuntu/backend 
-    pm2 start npm --name "backend" -- run start
+    cd /home/ubuntu/backend
+    pm2 start npm --name backend -- start
+    #pm2 start npm --name "backend" -- run start
     pm2 ls
 
 - name: start pm2 for dist/main.js
