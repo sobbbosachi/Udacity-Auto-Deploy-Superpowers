@@ -251,7 +251,6 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             #echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
-            #export API_URL="http://${BACKEND_IP}:3030"
             cd frontend
             npm install
             npm update
@@ -364,8 +363,8 @@ cleanup:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
+      - build-frontend
+      - build-backend
       # - test-frontend:
       #     requires: [build-frontend]
       # - test-backend:
@@ -374,22 +373,21 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure:
+      - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     #requires: [build-frontend, build-backend]
+          requires: [build-frontend, build-backend]
       #     filters:
       #       branches:
       #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
       #     #requires: [deploy-infrastructure]
-      #     requires: [configure-infrastructure]
-      # deploy-frontend:
-      #     #requires: [deploy-infrastructure]
-      #     requires: [run-migrations]
-      - deploy-backend
-      #     requires: [run-migrations]
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
