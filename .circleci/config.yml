@@ -251,12 +251,8 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             cd frontend
-            #npm install
-            #npm update
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
-            #aws s3 sync . s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --delete
-            #exit 1
       - destroy-environment
       - revert-migrations
 
@@ -277,7 +273,6 @@ jobs:
             sudo apt update
             sudo apt install python-pip python-dev
             sudo pip install awscli
-            npm install
             sudo apt install -y ansible
             sudo apt install -y rsync
             cd backend
@@ -372,21 +367,21 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
+      # - deploy-infrastructure
           # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # requires: [build-frontend, build-backend]
       #     filters:
       #       branches:
       #         only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          #requires: [deploy-infrastructure]
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      # - deploy-backend:
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     #requires: [deploy-infrastructure]
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
       #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
