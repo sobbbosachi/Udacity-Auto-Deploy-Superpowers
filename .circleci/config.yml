@@ -268,14 +268,14 @@ jobs:
           fingerprints: ["5d:50:40:94:25:ca:65:12:c3:7a:67:10:4e:23:62:80"]
       - attach_workspace:
           at: ~/
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       #sudo apt update
-      #       sudo apt install python-pip python-dev
-      #       sudo pip install awscli
-      #       sudo apt install -y ansible
-      #       sudo apt install -y rsync
+      - run:
+          name: Install dependencies
+          command: |
+            #sudo apt update
+            sudo apt install python-pip python-dev
+            sudo pip install awscli
+            sudo apt install -y ansible
+            #sudo apt install -y rsync
       - run:
           name: Deploy backend
           command: |
@@ -291,13 +291,11 @@ jobs:
             # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
             # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
             # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
-            cat  ./.circleci/ansible/inventory.txt
-            cat ./.circleci/ansible/deploy-backend.yml
-            #ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
             #your code here
             exit 1
-      #- destroy-environment
-      #- revert-migrations
+      - destroy-environment
+      - revert-migrations
 
   smoke-test:
     docker:
