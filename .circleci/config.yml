@@ -212,7 +212,6 @@ jobs:
             touch migrations.txt
             npm i
             npm run migrations >> migrations.txt
-            cat migrations.txt
       - run:
           name: Send migration results to memstash
           command: |
@@ -220,14 +219,14 @@ jobs:
             cat migrations.txt
             # migration=$( tail -n 1 migrations.txt)
             # echo $migration
-            # if echo "$migration" | grep -q "has been executed successfully"; then 
-            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
-            # else
-            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
-            #   exit 1
-            # fi
-            # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
-            # echo "${URLS}"
+            if migrations.txt | grep -q "has been executed successfully"; then 
+              curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+            else
+              curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              exit 1
+            fi
+            URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
+            echo "${URLS}"
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -236,7 +235,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:latest
     steps:
       - checkout
       - restore_cache:
@@ -246,6 +245,7 @@ jobs:
           command: |
             sudo apt install python-pip python-dev
             sudo pip install awscli
+            npm update
       - run:
           name: Get backend url
           command: |
@@ -259,8 +259,8 @@ jobs:
             cd frontend
             npm run build
             echo "${API_URL}"
-            #aws s3 cp dist s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive --acl public-read
-            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}"
+            aws s3 cp dist s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            #aws s3 sync . s3://udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
             exit 1
       - destroy-environment
       - revert-migrations
