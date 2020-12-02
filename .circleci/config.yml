@@ -155,11 +155,11 @@ jobs:
               --output text >> ./.circleci/ansible/inventory.txt
             cat ./.circleci/ansible/inventory.txt
 
-            export BACKEND_URL=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=udapeople" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> inventory.txt)
-            cat inventory.txt
+            # export BACKEND_URL=$(aws ec2 describe-instances \
+            #   --filters "Name=tag:project,Values=udapeople" \
+            #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            #   --output text >> inventory.txt)
+            # cat inventory.txt
       - run:
           name: Store the backend ip address to memstash so that frontend can use it. 
           command: |
@@ -209,19 +209,14 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            touch migrations.txt
-            npm install
-            npm run migrations >> migrations.txt
-            cat migrations.txt
-            npm fund
-            npm audit fix
-            npm run migrations >> migrations.txt
-            cat migrations.txt
+            npm i
+            npm run migrations
+
       - run:
           name: Send migration results to memstash
           command: |
             cd backend
-            cat migrations.txt
+            # cat migrations.txt
             # migration=$( tail -n 1 migrations.txt)
             # echo $migration
             # if echo "$migration" | grep -q "has been executed successfully"; then 
@@ -234,10 +229,10 @@ jobs:
             # fi
             # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
             # echo "${URLS}"
-      - save_cache:
-          key: node_modules
-          paths:
-            - backend/node_modules
+      # - save_cache:
+      #     key: node_modules
+      #     paths:
+      #       - backend/node_modules
       - run: exit 1
       - destroy-environment
       - revert-migrations
