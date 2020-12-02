@@ -12,7 +12,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
             aws cloudformation delete-stack --stack-name  udapeople-backend-prod-<< parameters.workflow-id >>
             aws cloudformation delete-stack --stack-name  udapeople-frontend-prod-<< parameters.workflow-id >>
 
@@ -30,7 +30,7 @@ commands:
             SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             #SUCCESS = 1
-            if(( $SUCCESS==1 )); 
+            if(( SUCCESS==1 )); 
             then
               cd ~/project/backend
               npm install
@@ -335,18 +335,34 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl
+            yum -y install tar gzip
       - run:
           name: Update cloudfront distribution
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure
+
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+
+            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
+              echo "$OldWorkflowID"
+              echo "$STACKS"
+
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --tags project=udapeople \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+            
+      - destroy-environment
+      - revert-migrations
 
 cleanup:
   docker:
