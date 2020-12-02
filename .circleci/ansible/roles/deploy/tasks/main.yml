@@ -19,11 +19,6 @@
     cd /home/ubuntu/backend
     npm install
 
-# - name: Install Node Dependencies
-#   shell: |
-#     cd /home/ubuntu/backend
-#     npm install
-
 - name: Building backend service
   shell: |
     cd /home/ubuntu/backend
