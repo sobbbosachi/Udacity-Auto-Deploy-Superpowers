@@ -26,10 +26,11 @@
     cd /home/ubuntu/backend
     npm run build
     npm run prestart:prod
-- name: "run migrations again"
-  shell: |
-    cd /home/ubuntu/backend
-    npm run migrations
+
+# - name: "run migrations again"
+#   shell: |
+#     cd /home/ubuntu/backend
+#     npm run migrations
     
 - name: Executing node
   become: true

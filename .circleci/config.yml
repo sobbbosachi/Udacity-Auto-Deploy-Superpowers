@@ -271,8 +271,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible curl
-            pip install awscli 
+            apk add --update tar gzip ansible nodejs npm curl openssh-client
+            pip install awscli
       - run:
           name: Deploy backend
           no_output_timeout: 30m
@@ -292,18 +292,24 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli
       - run:
-          name: Get backend url
+          name: Get backend url & Backend smoke test.
           command: |
-            # your code here
-      - run:
-          name: Backend smoke test.
-          command: |
-            # your code here
+            BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
+            export BACKEND_URL="http://${BACKEND_IP}:3030/api/status"
+            curl "http://${BACKEND_IP}:3030/api/status"
+
       - run:
           name: Frontend smoke test.
           command: |
-            # your code here
+            export URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"
+            if curl -s $URL | grep "Welcome"
+            then
+              exit 0
+            else
+              exit 1
+            fi
       # Here's where you will add some code to rollback on failure
 
   cloudfront-update:
