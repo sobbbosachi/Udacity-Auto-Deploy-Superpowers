@@ -201,7 +201,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: backend-build
+          keys: [backend-build]
       - run: sudo apt install python-pip python-dev
       - run: sudo pip install awscli
       - run:
@@ -212,25 +212,25 @@ jobs:
             touch migrations.txt
             npm i
             npm run migrations >> migrations.txt
+            cat migrations.txt
       - run:
           name: Send migration results to memstash
           command: |
             cd backend
-            # cat migrations.txt
+            cat migrations.txt
             # migration=$( tail -n 1 migrations.txt)
             # echo $migration
             # if echo "$migration" | grep -q "has been executed successfully"; then 
-            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration
+            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             # else
-            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration
+            #   curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             #   exit 1
             # fi
-            # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration)
+            # URLS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
             # echo "${URLS}"
       - save_cache:
+          paths: [backend/node_modules]
           key: backend-build
-          paths:
-            - backend/node_modules
       - destroy-environment
       - revert-migrations
 
@@ -239,6 +239,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
@@ -344,27 +346,27 @@ cleanup:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          #requires: [build-frontend, build-backend]
-          filters:
-            branches:
-              only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      - deploy-infrastructure
+          # #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [build-frontend, build-backend]
+          # filters:
+          #   branches:
+          #     only: [main]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
       - run-migrations:
-          #requires: [deploy-infrastructure]
-          requires: [configure-infrastructure]
+          requires: [deploy-infrastructure]
+          #requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
       # - deploy-backend:
