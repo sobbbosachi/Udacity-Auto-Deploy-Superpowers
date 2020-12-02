@@ -1,4 +1,13 @@
 ---
+- name: "update apt packages."
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
 
 - name: Copy backend dist files to remote server
   copy:
@@ -11,6 +20,7 @@
     ls -la
     printenv
     npm install
+    
 - name: building node services
   shell: |
     cd /home/ubuntu/backend
