@@ -349,7 +349,7 @@ jobs:
             #     --no-paginate --output text)
             aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output >> oldWorkflow.txt
+                --no-paginate --output text >> oldWorkflow.txt
             cat oldWorkflow.txt
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
