@@ -352,7 +352,7 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
               echo "${OldWorkflowID:23:31}"
               echo sxn "${OldWorkflowID:0:7}"
-              echo "${STACKS}"
+              echo $STACKS
               echo "${STACKS[@]}"
               # echo "$STACKS[*]"
 
