@@ -347,16 +347,17 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name udapeople-cloudfront \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides NewWorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
 
             export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                list-exports --query "Exports[?Name==\`NewWorkflowID\`].Value" \
                 --region eu-central-1 --no-paginate --output text)
             # aws cloudformation \
             #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             #     eu-central-1 --no-paginate --output text >> oldWorkflow.txt
             # cat oldWorkflow.txt
+
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
               echo "1111 : ${OldWorkflowID}"
