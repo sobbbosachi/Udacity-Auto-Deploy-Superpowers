@@ -352,8 +352,8 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
               echo "${OldWorkflowID:23:31}"
               echo "${STACKS}"
-              echo "${STACKS[@]}"
-              echo "$STACKS[*]"
+              # echo "${STACKS[@]}"
+              # echo "$STACKS[*]"
 
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
