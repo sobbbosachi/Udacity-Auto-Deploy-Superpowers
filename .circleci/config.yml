@@ -347,10 +347,10 @@ jobs:
             export OldWorkflowID=$(aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                 --region eu-central-1 --no-paginate --output text)
-            aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                eu-central-1 --no-paginate --output text >> oldWorkflow.txt
-            cat oldWorkflow.txt
+            # aws cloudformation \
+            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            #     eu-central-1 --no-paginate --output text >> oldWorkflow.txt
+            # cat oldWorkflow.txt
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
