@@ -350,10 +350,10 @@ jobs:
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-              echo " djhvhjvd : ${OldWorkflowID}"
-              echo " wldwwjljlw ${OldWorkflowID:0:7}"
-              echo "${STACKS}"
-              echo "${STACKS[@]}"
+              echo "djhvhjvd : ${OldWorkflowID}"
+              echo "wldwwjljlw: ${OldWorkflowID:0:7}"
+              echo "797877878: ${STACKS}"
+              echo "jbwcjbkcjb: ${STACKS[@]}"
               # echo "$STACKS[*]"
 
             aws cloudformation deploy \
