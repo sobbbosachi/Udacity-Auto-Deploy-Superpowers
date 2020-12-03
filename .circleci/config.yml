@@ -346,10 +346,10 @@ jobs:
           command: | #as given in the exercise
             export OldWorkflowID=$(aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --region eu-entral-1 --no-paginate --output text)
+                --region eu-central-1 --no-paginate --output text)
             aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                eu-entral-1 --no-paginate --output text >> oldWorkflow.txt
+                eu-central-1 --no-paginate --output text >> oldWorkflow.txt
             cat oldWorkflow.txt
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
