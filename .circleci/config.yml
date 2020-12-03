@@ -330,7 +330,7 @@ jobs:
             # BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
             # echo "${BACKEND_IP}"
             # curl "http://${BACKEND_IP}:3030/api/status"
-            curl "http://18.198.3.175/:3030/api/status"
+            curl "http://18.198.3.175:3030/api/status"
       # - destroy-environment
       # - revert-migrations
 
