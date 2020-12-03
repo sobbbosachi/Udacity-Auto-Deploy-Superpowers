@@ -352,6 +352,8 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
               echo "${OldWorkflowID}"
               echo "${STACKS}"
+              echo "${STACKS[@]}"
+              echo "$STACKS[*]"
 
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
@@ -365,8 +367,8 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
             fi
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
 
 workflows:
