@@ -351,7 +351,7 @@ jobs:
               --tags project=udapeople
 
             export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`NewWorkflowID\`].Value" \
+                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                 --region eu-central-1 --no-paginate --output text)
             # aws cloudformation \
             #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
