@@ -330,7 +330,7 @@ jobs:
           command: |
             BACKEND_IP=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/ipaddress)
             echo "${BACKEND_IP}"
-            curl "http://${BACKEND_IP}:3000/api/status"
+            curl "http://${BACKEND_IP}:3030/api/status"
       # - destroy-environment
       # - revert-migrations
 
@@ -374,36 +374,36 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          #requires: [build-frontend, build-backend]
-          filters:
-            branches:
-              only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-          #requires: [deploy-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-          #requires: [deploy-infrastructure]
-      - deploy-backend:
-          requires: [run-migrations]
-          #requires: [deploy-infrastructure]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     #requires: [build-frontend, build-backend]
+      #     filters:
+      #       branches:
+      #         only: [main]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      #     #requires: [deploy-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      #     #requires: [deploy-infrastructure]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      #     #requires: [deploy-infrastructure]
+      - smoke-test
+          #requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
