@@ -337,13 +337,19 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum -y install tar gzip
       - run:
           name: Update cloudfront distribution
-          command: | #as given in the exercise
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+
             export OldWorkflowID=$(aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                 --region eu-central-1 --no-paginate --output text)
@@ -351,19 +357,12 @@ jobs:
             #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             #     eu-central-1 --no-paginate --output text >> oldWorkflow.txt
             # cat oldWorkflow.txt
-
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-              echo "djhvhjvd : ${OldWorkflowID}"
-              echo "wldwwjljlw: ${OldWorkflowID:0:7}"
-              echo "797877878: ${STACKS}"
-              echo "jbwcjbkcjb: ${STACKS[@]}"
-
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --stack-name udapeople-cloudfront \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --tags project=udapeople
+              echo "1111 : ${OldWorkflowID}"
+              echo "2222: ${OldWorkflowID:0:7}"
+              echo "3333: ${STACKS}"
+              echo "4444: ${STACKS[@]}"
 
             # if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             # then
@@ -374,6 +373,23 @@ jobs:
       # - destroy-environment
       # - revert-migrations
 
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --region eu-central-1 --no-paginate --output text)
+            export STACKS=[] #put the list of stacks here
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              # your code here
+            fi
 
 workflows:
   default:
