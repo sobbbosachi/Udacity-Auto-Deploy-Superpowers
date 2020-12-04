@@ -368,11 +368,12 @@ jobs:
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
               aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
-              #aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
-              # aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
-              # aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
+              exit 1 
             fi
-
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
