@@ -356,15 +356,17 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-            export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --region eu-central-1 --no-paginate --output text)
+          export OldWorkflowID=5266943
+          export STACKS=udapeople-frontend-prod-5266943	udapeople-backend-prod-5266943
+            # export OldWorkflowID=$(aws cloudformation \
+            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            #     --region eu-central-1 --no-paginate --output text)
 
-            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
+            # export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            #   --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
-            echo "${OldWorkflowID}"
-            echo "${STACKS}"
+            # echo "${OldWorkflowID}"
+            # echo "${STACKS}"
       - run:
           name: Remove old stacks and files
           command: |
@@ -408,7 +410,7 @@ workflows:
       #     #requires: [deploy-infrastructure]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update
+      # - cloudfront-:
       #     requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      - cleanup
+          # requires: [cloudfront-update]
