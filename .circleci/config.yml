@@ -347,8 +347,8 @@ jobs:
 
             if [ -n "${OldWorkflowID}" ]; then
               aws cloudformation update-stack \
-                --template-file .circleci/files/cloudfront.yml \
                 --stack-name udapeople-cloudfront \
+                --template-file .circleci/files/cloudfront.yml \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
                 --tags project=udapeople
             else
