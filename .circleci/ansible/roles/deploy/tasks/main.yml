@@ -1,13 +1,4 @@
 ---
-# - name: "update apt packages."
-#   become: yes
-#   apt:
-#     update_cache: yes
-
-# - name: "upgrade packages"
-#   become: yes
-#   apt:
-#     upgrade: yes
 
 - name: "install dependencies."
   become: true
@@ -30,14 +21,12 @@
   shell: |
     cd /home/ubuntu/backend
     npm run build
-    npm run prestart:prod
     
 - name: Executing node
   become: true
   shell: |
     cd /home/ubuntu/backend
     pm2 start npm --name backend -- start
-    #pm2 start npm --name "backend" -- run start
     pm2 ls
 
 - name: start pm2 for dist/main.js
