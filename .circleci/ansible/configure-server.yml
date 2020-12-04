@@ -3,7 +3,7 @@
 - name: "configuration play." 
   hosts: web
   user: ubuntu
-  gather_facts: true #false
+  gather_facts: true
   vars:
     #- ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
@@ -27,9 +27,6 @@
       wait_for_connection:
         #timeout: 600
 
-    # - name: "install python for Ansible."
-    #   become: true
-    #   raw: "sudo yum -y install python"
-
   roles:
     - configure-server
+    - configure-prometheus-node-exporter
