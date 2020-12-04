@@ -346,14 +346,12 @@ jobs:
             echo "${OldWorkflowID}"
 
             if [ -n "${OldWorkflowID}" ]; then
-              echo "empty"
               # aws cloudformation update-stack \
               #   --template-file .circleci/files/cloudfront.yml \
               #   --stack-name udapeople-cloudfront \
               #   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               #   --tags project=udapeople
             else
-              echo "full"
               # aws cloudformation deploy \
               #   --template-file .circleci/files/cloudfront.yml \
               #   --stack-name udapeople-cloudfront \
