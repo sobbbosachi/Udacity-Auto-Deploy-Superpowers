@@ -356,17 +356,15 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-          export OldWorkflowID=$(5266943)
-          export STACKS=$(udapeople-frontend-prod-5266943	udapeople-backend-prod-5266943)
-            # export OldWorkflowID=$(aws cloudformation \
-            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            #     --region eu-central-1 --no-paginate --output text)
+            export OldWorkflowID=$(aws cloudformation \
+                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                --region eu-central-1 --no-paginate --output text)
 
-            # export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            #   --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
+            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
-            # echo "${OldWorkflowID}"
-            # echo "${STACKS}"
+            echo "${OldWorkflowID}"
+            echo "${STACKS}"
       - run:
           name: Remove old stacks and files
           command: |
@@ -379,36 +377,36 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     #requires: [build-frontend, build-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-:
-      #     requires: [smoke-test]
-      - cleanup
-          # requires: [cloudfront-update]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+          #requires: [deploy-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
