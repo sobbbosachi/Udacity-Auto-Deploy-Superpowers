@@ -23,17 +23,17 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            cd ~/project/backend
-            npm install
-            npm run migrations:revert
+            # cd ~/project/backend
+            # npm install
+            # npm run migrations:revert
 
-            # SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
-            # if(( SUCCESS==1 )); 
-            # then
-            #   cd ~/project/backend
-            #   npm install
-            #   npm run migrations:revert
-            # fi
+            SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
+            if(( SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+            fi
 
 
 jobs:
@@ -216,7 +216,6 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            #echo -e "NODE_ENV=production\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} \nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nENVIRONMENT=production" > ./backend/.env
             cd backend
             touch migrations.txt
             npm i
@@ -386,34 +385,34 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
       - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          requires: [build-frontend, build-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations:
-          #requires: [configure-infrastructure]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-          # requires: [cloudfront-update]
+      - run-migrations:
+          requires: [configure-infrastructure]
+          #requires: [deploy-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
+          #requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
