@@ -361,6 +361,7 @@ jobs:
             if [[ "udapeople-frontend-prod-5266943	udapeople-backend-prod-5266943" =~ "5266943" ]]
             then
              exit 0
+             echo "sucesfully got the you SOB"
               # aws s3 rb s3://udapeople-${OldWorkflowID} --force
               # aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
               # aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
