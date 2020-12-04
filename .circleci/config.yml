@@ -389,6 +389,7 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [build-frontend, build-backend]
           filters:
             branches:
               only: [main]
@@ -396,13 +397,16 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+          #requires: [deploy-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
+          #requires: [deploy-infrastructure]
       - deploy-backend:
           requires: [run-migrations]
+          #requires: [deploy-infrastructure]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
+      - cloudfront-:
           requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
