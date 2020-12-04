@@ -375,7 +375,6 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
             fi
 
-
 workflows:
   default:
     jobs:
@@ -412,3 +411,4 @@ workflows:
           requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
+          
