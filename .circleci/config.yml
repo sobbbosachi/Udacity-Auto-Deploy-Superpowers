@@ -340,54 +340,13 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-            # aws cloudformation deploy \
-            #   --template-file .circleci/files/cloudfront.yml \
-            #   --stack-name udapeople-cloudfront \
-            #   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            #   --tags project=udapeople
-
-              aws cloudformation update-stack \
-                --stack-name udapeople-cloudfront \
-                --template-file .circleci/files/cloudfront.yml \
-                --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-                --tags project=udapeople
-
-
-            # export OldWorkflowID=$(aws cloudformation \
-            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            #     --region eu-central-1 --no-paginate --output text)
-            # echo "${OldWorkflowID}"
-
-            # if [ -n "${OldWorkflowID}" ]; then
-            #   aws cloudformation update-stack \
-            #     --stack-name udapeople-cloudfront \
-            #     --template-file .circleci/files/cloudfront.yml \
-            #     --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            #     --tags project=udapeople
-            # else
-            #   aws cloudformation deploy \
-            #     --template-file .circleci/files/cloudfront.yml \
-            #     --stack-name udapeople-cloudfront \
-            #     --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            #     --tags project=udapeople
-            # fi
-
-            # export OldWorkflowID=$(aws cloudformation \
-            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            #     --region eu-central-1 --no-paginate --output text)
-
-            # export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            #   --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-            #   echo "${OldWorkflowID}"
-
-            # if [[ "udapeople-frontend-prod-5266943	udapeople-backend-prod-5266943" =~ "5266943" ]]
-            # then
-            #   aws s3 rb s3://udapeople-${OldWorkflowID} --force
-            #   aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
-            #   aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
-            # fi
-      # - destroy-environment
-      # - revert-migrations
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+      - destroy-environment
+      - revert-migrations
 
   cleanup:
     docker:
@@ -411,10 +370,10 @@ jobs:
           command: |
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
-              exit 0
-              # aws s3 rb s3://udapeople-${OldWorkflowID} --force
-              # aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
-              # aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
+              #exit 0
+              aws s3 rb s3://udapeople-${OldWorkflowID} --force
+              aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
             fi
 
 workflows:
