@@ -368,10 +368,10 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            if [[ udapeople-cloudfront	udapeople-frontend-prod-b653be1	udapeople-backend-prod-b653be1 =~ b653be1 ]]; then
-              aws s3 rb s3://udapeople-b653be1 --force
-              aws cloudformation delete-stack --stack-name "udapeople-backend-prod-b653be1"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-b653be1"
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
+              aws s3 rb s3://udapeople-${OldWorkflowID} --force
+              aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
             fi
 
 workflows:
