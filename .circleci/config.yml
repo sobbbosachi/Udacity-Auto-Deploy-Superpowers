@@ -369,7 +369,7 @@ jobs:
           name: Get old stack workflow id back & Remove old stacks and files
           command: |
             cat ./.circleci/oldworkflowid.txt
-            OldWorkflowID=$( tail -n oldworkflowid.txt)
+            OldWorkflowID=$( tail -n 1 oldworkflowid.txt)
             # export OldWorkflowID=$(aws cloudformation \
             #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             #     --region eu-central-1 --no-paginate --output text)
