@@ -351,10 +351,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip npm
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum -y install tar gzip npm
       - run:
           name: Get old stack workflow id & Remove old stacks and files
           command: |
