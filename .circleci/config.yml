@@ -370,17 +370,19 @@ jobs:
           command: |
             cat ./.circleci/oldworkflowid.txt
             OldWorkflowID=$(head -n 1 ./.circleci/oldworkflowid.txt)
-            echo "WorkflowID: ${OldWorkflowID}"
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
+            echo "${STACKS}"
 
             if [[ "${STACKS[@]}" =~ !"${OldWorkflowID}" ]]; then
               echo "old"
+              - revert-migrations
               # aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
               # aws cloudformation delete-stack --stack-name "udapeople-backend-prod-${OldWorkflowID}"
               # aws cloudformation delete-stack --stack-name "udapeople-frontend-prod-${OldWorkflowID}"
             fi
+      - revert-migrations
 
 
 workflows:
