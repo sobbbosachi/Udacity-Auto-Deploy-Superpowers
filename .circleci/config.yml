@@ -23,17 +23,13 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
+            SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
+            if(( SUCCESS==1 )); 
+            then
               cd ~/project/backend
               npm install
               npm run migrations:revert
-
-            # SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
-            # if(( SUCCESS==1 )); 
-            # then
-            #   cd ~/project/backend
-            #   npm install
-            #   npm run migrations:revert
-            # fi
+            fi
 
 
 jobs:
@@ -346,12 +342,11 @@ jobs:
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             --region eu-central-1 --no-paginate --output text >> ./.circleci/oldworkflowid.txt
 
-            # aws cloudformation deploy \
-            #   --template-file .circleci/files/cloudfront.yml \
-            #   --stack-name udapeople-cloudfront \
-            #   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            #   --tags project=udapeople
-            exit 1
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
       - persist_to_workspace:
           root: ~/
           paths:
