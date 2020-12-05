@@ -366,8 +366,9 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
             echo "${OldWorkflowID}"
-            echo "${STACKS:0:7}"
-            echo "${STACKS:8:15}"
+            echo "${STACKS}"
+            echo "${STACKS:23:29}"
+            echo "${STACKS:22:229}"
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
               exit 0
