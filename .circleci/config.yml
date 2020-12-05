@@ -367,8 +367,8 @@ jobs:
 
             echo "${OldWorkflowID}"
             echo "${STACKS}"
-            echo "${STACKS:23:29}"
-            echo "${STACKS:22:229}"
+            echo "${STACKS:24:7}"
+            echo "${STACKS:23:7}"
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
               exit 0
