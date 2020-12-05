@@ -331,10 +331,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       yum -y install tar gzip npm
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip npm
       - run:
           name: Get old stack workflow id & Update cloudfront distribution
           command: |
@@ -351,8 +351,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/oldworkflowid.txt
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   cleanup:
     docker:
