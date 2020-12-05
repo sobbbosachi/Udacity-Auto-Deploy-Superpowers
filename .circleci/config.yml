@@ -338,9 +338,9 @@ jobs:
       - run:
           name: Get old stack workflow id & Update cloudfront distribution
           command: |
-            export OldWorkflowID=$(aws cloudformation \
+            aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --region eu-central-1 --no-paginate --output text >> ./.circleci/oldworkflowid.txt)
+            --region eu-central-1 --no-paginate --output text >> ./.circleci/oldworkflowid.txt
 
             # aws cloudformation deploy \
             #   --template-file .circleci/files/cloudfront.yml \
@@ -351,8 +351,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/oldworkflowid.txt
-      # - destroy-environment
-      # - revert-migrations
+      - destroy-environment
+      - revert-migrations
 
   cleanup:
     docker:
@@ -370,17 +370,10 @@ jobs:
           command: |
             cat ./.circleci/oldworkflowid.txt
             OldWorkflowID=$(head -n 1 ./.circleci/oldworkflowid.txt)
-            # export OldWorkflowID=$(aws cloudformation \
-            #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            #     --region eu-central-1 --no-paginate --output text)
+            echo "WorkflowID: ${OldWorkflowID}"
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-
-            echo "get from workspace:  ${OldWorkflowID}"
-            echo "${STACKS}"
-            echo "${STACKS:24:7}"
-            echo "${STACKS:23:7}"
 
             if [[ "${STACKS[@]}" =~ !"${OldWorkflowID}" ]]; then
               echo "old"
@@ -423,6 +416,6 @@ workflows:
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       - cloudfront-update
-      #     requires: [smoke-test]
+          # requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
