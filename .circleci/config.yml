@@ -366,9 +366,10 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Get old stack workflow id & Remove old stacks and files
+          name: Get old stack workflow id back & Remove old stacks and files
           command: |
             cat ./.circleci/oldworkflowid.txt
+            OldWorkflowID=$( tail -n inventory.txt)
             # export OldWorkflowID=$(aws cloudformation \
             #     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             #     --region eu-central-1 --no-paginate --output text)
@@ -376,7 +377,7 @@ jobs:
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
-            echo "${OldWorkflowID}"
+            echo "get from workspace:  ${OldWorkflowID}"
             echo "${STACKS}"
             echo "${STACKS:24:7}"
             echo "${STACKS:23:7}"
