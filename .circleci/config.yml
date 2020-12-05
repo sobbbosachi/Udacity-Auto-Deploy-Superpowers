@@ -334,7 +334,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip npm
+            yum -y install tar gzip
       - run:
           name: Get old stack workflow id & Update cloudfront distribution
           command: |
@@ -359,10 +359,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       yum -y install tar gzip npm
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip
       - attach_workspace:
           at: ~/
       - run:
