@@ -27,7 +27,7 @@
 .react-tagsinput .react-tagsinput-remove::before {
   content: 'x';
   margin-left: 3px;
-  border: solid 1px #ff9051;
+  border: solid 1px #47bafc;
   border-radius: 100px;
   width: 18px;
   height: 18px;
