@@ -338,7 +338,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip nodejs npm
+            yum -y install tar gzip
       - run:
           name: Get old stack workflow id & Update cloudfront distribution
           command: |
@@ -357,7 +357,6 @@ jobs:
           paths:
             - project/.circleci/oldworkflowid.txt
       - destroy-environment
-      - revert-migrations
 
   cleanup:
     docker:
