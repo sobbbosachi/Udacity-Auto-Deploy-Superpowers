@@ -146,12 +146,12 @@ jobs:
             echo -e "[web]\n" > ./.circleci/ansible/inventory.txt
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople" \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> ./.circleci/ansible/inventory.txt
             cat ./.circleci/ansible/inventory.txt
 
             export BACKEND_URL=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=udapeople" \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt)
             cat inventory.txt
@@ -225,7 +225,6 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             else
               curl -H "Content-Type: text/plain" -H "token:154b0161-90a0-4670-a255-6a72c99dd5ad" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
-              exit 1
             fi
             SUCCESS=$(curl -H "token: 154b0161-90a0-4670-a255-6a72c99dd5ad" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
             echo "${SUCCESS}"
@@ -279,7 +278,7 @@ jobs:
             pip install awscli
       - run:
           name: Deploy backend
-          no_output_timeout: 30m
+          no_output_timeout: 60m
           command: |
             echo ENVIROMENT=development > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
@@ -335,17 +334,24 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip npm
+            yum -y install tar gzip
       - run:
-          name: Update cloudfront distribution
+          name: Get old stack workflow id & Update cloudfront distribution
           command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --region eu-central-1 --no-paginate --output text >> ./.circleci/oldworkflowid.txt
+
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name udapeople-cloudfront \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/oldworkflowid.txt
       - destroy-environment
-      - revert-migrations
 
   cleanup:
     docker:
@@ -355,18 +361,17 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip npm
+            yum -y install tar gzip
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Get old stack workflow id & Remove old stacks and files
+          name: Get old stack workflow id back & Remove old stacks and files
           command: |
-            export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --region eu-central-1 --no-paginate --output text)
+            cat ./.circleci/oldworkflowid.txt
+            OldWorkflowID=$(head -n 1 ./.circleci/oldworkflowid.txt)
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-
-            echo "${OldWorkflowID}"
             echo "${STACKS}"
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]; then
@@ -391,24 +396,20 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          #requires: [build-frontend, build-backend]
           filters:
             branches:
               only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      #     #requires: [deploy-infrastructure]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
