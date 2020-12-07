@@ -21,7 +21,7 @@
   shell: |
     cd /home/ubuntu/backend
     npm run build
-#npm run prestart:prod
+    npm run start:prod
         
 - name: Executing node
   become: true
