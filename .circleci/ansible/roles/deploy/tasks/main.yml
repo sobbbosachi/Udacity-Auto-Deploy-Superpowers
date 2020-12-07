@@ -3,7 +3,7 @@
 - name: "install dependencies."
   become: true
   apt:
-    name: "tar" #name: ["nodejs", "npm", "tar"]
+    name: "tar"
     state: latest
     update_cache: yes
 
@@ -22,7 +22,7 @@
     cd /home/ubuntu/backend
     npm run build
     npm run prestart:prod
-    
+        
 - name: Executing node
   become: true
   shell: |
